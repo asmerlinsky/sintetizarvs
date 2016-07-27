@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+gcc envolvente_templados.c -lm -o envtempl.exe
+# Ejecutable templado numerador m
+# con este formato de nombres, van a bien correr los scripts en python, sino hay que ponerse a cambiarlos.
+for f in emg*.Sound  #paso por todos los archivos con ese nombre.
+     do ./envtempl.exe $f
+done
+
+#: <<'END' esto comenta todo lo ue hay en en el medio
+#END
+# los argumentos son -criterio -cantidadtemplados
+python3 figurastemplados.py 2 7
+
+
