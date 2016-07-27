@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+
+
+gcc sintetizador.c -lm -o sintetizar.exe
+
+./sintetizar.exe BAdia.Sound BAcanto.Sound
+
+
+./sintetizar.exe BAnoche.Sound BAcanto.Sound
+
+
+python3 graficarsintetico.py BAdia.Sound BAcanto.Sound BAnoche.Sound

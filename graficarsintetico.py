@@ -1,16 +1,18 @@
 
 import matplotlib.pyplot as plt
 import scipy.signal as signal
-# import matplotlib.patches as ptch
 import numpy as np
 from matplotlib import rcParams
 import matplotlib
 import sys
 import sounddevice as sd
 import time
+
+
+
 fn=44150        
 a1, a2 = signal.butter(2, 5/fn, btype='highpass', analog=False, output='ba')
-###Sonograma y vs A B DIA
+###CARGO LOS ARCHIVOS PARA GRAFICAR
 vs=np.loadtxt(sys.argv[1])
 sintetizado=np.loadtxt('sintetizado.'+sys.argv[1]+'.dat')
 envolvente=np.loadtxt('envolvente.'+sys.argv[1]+'.dat')
@@ -19,12 +21,14 @@ pfinal=np.loadtxt('pfinal.'+sys.argv[1]+'.dat')
 envcanto=np.loadtxt('envolvente.'+sys.argv[2]+'.dat')
 canto=np.loadtxt(sys.argv[2])
 noche=np.loadtxt('pfinal.'+sys.argv[3]+'.dat')
-# sintetizado=signal.filtfilt(a1,a2,sintetizado)
+
+# FILTRO
 filtrado1=signal.filtfilt(a1,a2,filtrado1)
 a1, a2 = signal.butter(2, 400/fn, btype='highpass', analog=False, output='ba')
+
+##FILTRO BAJA CONTINUA
 pfinal=signal.filtfilt(a1,a2,pfinal)
 noche=signal.filtfilt(a1,a2,noche)
-
 noche/=np.max(np.abs(noche))
 sintetizado/=np.max(np.abs(sintetizado))
 filtrado1/=np.max(np.abs(filtrado1))
@@ -34,8 +38,8 @@ pfinal/=np.max(np.abs(pfinal))
 Fs=44150
 t=np.linspace(0,len(sintetizado)/Fs,len(sintetizado))
 
-print("sintetizado max=",np.max(sintetizado))
-print("sintetizado min=",np.min(sintetizado))
+#print("sintetizado max=",np.max(sintetizado))
+#print("sintetizado min=",np.min(sintetizado))
 
 if(np.max(sintetizado)==np.min(sintetizado)):
     sys.exit("MINIMO=MAXIMO")
