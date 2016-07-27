@@ -1,6 +1,5 @@
-
-/*Realiza envolvente de templados
-HAY QUE INTRODUCIRLO POR LINEA DE COMANDO COMO ARGV
+/*Sintetiza canto
+HAY QUE INTRODUCIRLO POR LINEA DE COMANDO LOS ARCHIVOS
 
 */
 #include <stdio.h>
@@ -128,6 +127,9 @@ int main(int argc, char *argv[]) {
     printf("Ndatos=%d\n",Ndatos1);
     for(i=Ndatos1;i<=POT2up;i++){temp[i]=0.0;}
     printf("temp[%d]=%g\n",1340,temp[1340]);
+    
+    
+    
     //CARGA PROXY PRESION
     double *sonido;
  
@@ -194,7 +196,7 @@ int main(int argc, char *argv[]) {
 
     
     
-    //FILTRO SON SAV-GOL
+    //FILTRO CON SAV-GOL
     
     int np,nl,nr,ld,m,index,Nmin;
     char intoutput[100],envolvente[100];
@@ -216,15 +218,15 @@ int main(int argc, char *argv[]) {
     for(i=2;i<POT2up-1;i++) {sav[i]=(double) ans1[i];
         
     }
+    
     //LOS DATOS SON sav[i]
-    printf("sav=%g\n",sav[4302]);
 
     double *sintetico;
     sintetico=dvector(1,POT2up);
     
     double envmax=0.0;
     printf("POT2up=%d\n",POT2up);
-    //busco maximo*0.05 y ese es umbral de presion
+    //busco maximo de la envolvente vs
     for(i=1;i<=POT2up;i++){
         if (envmax<fabs(sav[i])){
             envmax=fabs(sav[i]);
@@ -234,12 +236,12 @@ int main(int argc, char *argv[]) {
     }
 
     printf("envmax=%g\n",envmax);
-    
+    //defino renormalización de la envolvente
     double umbral;
     double rango;
     double min=0.00001;
     rango=0.1-min;
-    umbral=0.0008;//OJO CON ESTO
+    umbral=0.0008;//Defino un umbral de presión para prendido y apagado
     //umbral+=0.002;
     double renorm;
     renorm=(rango / envmax);
@@ -270,17 +272,18 @@ int main(int argc, char *argv[]) {
     while (i<=POT2up) {
         if (taux==pasosint){
             sintetico[i]=result[1];
-            if (av_pres[i]>umbral){ bb.pres=0.15; }
+            if (av_pres[i]>umbral){ bb.pres=0.15; } //si la presion supera el umbral prendo el sistema
             else { bb.pres=-0.15; }
                         
             bb.VS=sav[i]-sav[i]*sav[i]*(9E-5);
             taux=0;
             i++;            
         }       
-        rk4(modelo,result,2,t,dt);
+        rk4(modelo,result,2,t,dt); //sintetizo
         taux++;
         t+=dt;
     }
+    //guardo el sintetizado y la envolvente de vs
     strcpy(intoutput, "sintetizado.");
     strcat(intoutput, nomfile);
     strcat(intoutput, ".dat");
@@ -291,7 +294,7 @@ int main(int argc, char *argv[]) {
     strcat(envolvente, ".dat");
     vector_to_file(envolvente,sav,1,POT2up);
     
-
+    //paso por el filtro traqueal
     double *ptraqueal, *ptraqout;
     double ref=0.8;
     ptraqueal=dvector(1,POT2up);
@@ -308,7 +311,7 @@ int main(int argc, char *argv[]) {
     for (i=5;i<=POT2up;i++){
     ptraqout[i]=(1-ref)*ptraqueal[i-5];
     }
-    
+    //guardo las señales
     char nomptraqueal[100];
     strcpy(nomptraqueal, "ptraqueal.");
     strcat(nomptraqueal, nomfile);
@@ -322,7 +325,7 @@ int main(int argc, char *argv[]) {
     strcat(nomptraqout, ".dat");
     vector_to_file(nomptraqout,ptraqout,1,POT2up);
     
-    
+    //integro el resonador de helmholtz
     double vv[3]; 
     double *Pfinal;
     Pfinal=dvector(1,POT2up);
