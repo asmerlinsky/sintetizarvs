@@ -186,7 +186,8 @@ int main(int argc, char *argv[]) {
         aa.beta=sonido[i];
         rk4(takens,v,1,t+0.0,dt);
         buff[i]=v[0];
-    }    
+    }  
+
     for(i=1;i<=POT2up;i++){
         aa.beta=buff[i];
         rk4(takens,v,1,t+0.0,dt);
@@ -244,9 +245,9 @@ int main(int argc, char *argv[]) {
     //defino renormalización de la envolvente
     double umbral;
     double rango;
-    double min=0.0001;
-    rango=0.11-min;
-    umbral=0.000013;//Defino un umbral de presión para prendido y apagado
+    double min=0.0000001;
+    rango=0.1-min;
+    umbral=0.000017;//Defino un umbral de presión para prendido y apagado
     //umbral+=0.002;
     double renorm;
     renorm=(rango / envmax);
@@ -276,7 +277,7 @@ int main(int argc, char *argv[]) {
     
     while (i<=POT2up) {
         if (taux==pasosint){
-            sintetico[i]=result[0];
+            sintetico[i]=result[1];
             if (av_pres[i]>umbral){ bb.pres=0.15; } //si la presion supera el umbral prendo el sistema
             else { bb.pres=-0.15; }
                         
@@ -301,7 +302,7 @@ int main(int argc, char *argv[]) {
     
     //paso por el filtro traqueal
     double *ptraqueal, *ptraqout;
-    double ref=0.8;
+    double ref=0.5;
     ptraqueal=dvector(1,POT2up);
     ptraqout=dvector(1,POT2up);
     

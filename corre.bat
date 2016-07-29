@@ -1,4 +1,4 @@
-gcc sintetizadorv3.c -lm -o sintetizar
+gcc sintetizadorprueba.c -lm -o sintetizar
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 sintetizar BAdia.sound BAcanto.Sound
